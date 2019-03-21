@@ -1,9 +1,8 @@
 /*
 Package vehicle_btc main.go
 
-@author leandre <leandre@kucoin.com>
+@Leno Lee <yongli@matrix.io>
 @copyright All rights reserved
-Date: 2018/9/6
 */
 package main
 
