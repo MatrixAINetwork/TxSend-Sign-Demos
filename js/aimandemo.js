@@ -125,13 +125,13 @@ function GetGasPrice() {
   console.log(gasPrice.toString());
 }
 
-//获取账户余额
+//获取区块信息
 function GetBlockByNumber(blocknum) {
   let blockinfo = aiman.man.getBlock(blocknum,false);
   console.log(blockinfo);
 }
 
-//获取区块信息
+//获取账户余额
 function GetBalance(addr) {
   let balance = aiman.man.getBalance(addr);
   console.log(balance[0].balance.toString());
