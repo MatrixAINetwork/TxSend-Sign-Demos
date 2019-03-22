@@ -23,7 +23,7 @@ genManAddress = function (address) {
   return ('MAN.' + manAddress) + arr[crc8('MAN.' + manAddress) % 58]
 }
 
-//创建账户(可以保存为私钥形式或者密码+keystore)
+//Create Account(private key or password+keystore)
 function CreatKeystore(password){
   var dk;// = keythereum.create();
   while (true) {
@@ -32,9 +32,9 @@ function CreatKeystore(password){
         break;
       }
   }
-  //私钥
+  //private key
   console.log(dk.privateKey);
-  //密码 + keystore
+  //password + keystore
   var keyObject = keythereum.dump(password, dk.privateKey, dk.salt, dk.iv);
   keyObject.address = genManAddress(keyObject.address);
   console.log(keyObject.address);
@@ -44,7 +44,7 @@ function CreatKeystore(password){
 }
 
 
-//发送交易
+//sendTx
 function sendRawTransaction(from, privateKey) {
 
 var rawTx = {
@@ -69,7 +69,9 @@ var rawTx = {
     rawTx.nonce = aiman.toHex(nonce);
     const tx = new Tx(rawTx);
     // console.log("sss"+tx);
+	//signTx
     tx.sign(privateKey);
+	//signed data structing
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
    
@@ -119,19 +121,19 @@ var rawTx = {
   });
 }
 
-//获取gas price
+//get gas price
 function GetGasPrice() {
   let gasPrice = aiman.man.gasPrice;
   console.log(gasPrice.toString());
 }
 
-//获取区块信息
+//get block info
 function GetBlockByNumber(blocknum) {
   let blockinfo = aiman.man.getBlock(blocknum,false);
   console.log(blockinfo);
 }
 
-//获取账户余额
+//get balance
 function GetBalance(addr) {
   let balance = aiman.man.getBalance(addr);
   console.log(balance[0].balance.toString());
