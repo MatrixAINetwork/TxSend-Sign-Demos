@@ -71,7 +71,7 @@ var rawTx = {
     // console.log("sss"+tx);
 	//signTx
     tx.sign(privateKey);
-	//signed data structing
+	//signed data construct
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
    
