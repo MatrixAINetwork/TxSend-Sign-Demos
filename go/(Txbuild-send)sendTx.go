@@ -32,12 +32,18 @@ var (
 		AIMan.NewAIMan(providers.NewHTTPProvider("api85.matrix.io", 100, false)),
 		Accounts.NewKeystoreManager(KeystorePath, 1),
 	}
+
+	Jerry_Manager = &manager.Manager{
+		AIMan.NewAIMan(providers.NewHTTPProvider("testnet.matrix.io", 100, true)),
+		Accounts.NewKeystoreManager(KeystorePath, 3),
+	}
+
 )
 
 //发送交易
 func SendTx(from string, to string, money int64, usegas int, gasprice int64) (connection *manager.Manager, txID string) {
 
-	connection = Tom_Manager
+	connection = Jerry_Manager
 	cid := *connection.ChainID
 	fmt.Println(cid)
 	types.NewEIP155Signer(connection.ChainID)
@@ -99,7 +105,7 @@ func SendTx(from string, to string, money int64, usegas int, gasprice int64) (co
 //发送交易（使用私钥进行签名）
 func SendTxByPrivateKey(from string, to string, money int64, usegas int, gasprice int64,PrivateKey *ecdsa.PrivateKey) (connection *manager.Manager, txID string) {
 
-	connection = Tom_Manager
+	connection = Jerry_Manager
 
 	amount := big.NewInt(money)
 	gas := uint64(usegas)
@@ -119,14 +125,6 @@ func SendTxByPrivateKey(from string, to string, money int64, usegas int, gaspric
 	//构建交易对象
 	trans := transactions.NewTransaction(nonce.Uint64(), to, amount, gas, price,
 		[]byte{}, 0, 0, 0)
-
-
-	//tx1 := trans.ToTransaction()
-	//tx,err:=types.SignTx(tx1, types.NewEIP155Signer(connection.ChainID),PrivateKey)
-	//
-	//trans.R = (*hexutil.Big)(tx.GetTxR())
-	//trans.S = (*hexutil.Big)(tx.GetTxS())
-	//trans.V = (*hexutil.Big)(tx.GetTxV())
 
 	trans,err=connection.Man.SignTxByPrivate(trans,from,PrivateKey,connection.ChainID)
 	//发送签名后的交易对象
@@ -190,7 +188,7 @@ func GenManAddress()  {
 
 //获取账户余额
 func GetBalance(addr string) *big.Int {
-	connection := Tom_Manager
+	connection := Jerry_Manager
 	balance,err:=connection.Man.GetBalance(addr, "latest")
 	if err!=nil {
 	}
@@ -200,7 +198,7 @@ func GetBalance(addr string) *big.Int {
 
 //获取gasprice
 func GetGasPrice() *big.Int  {
-	connection := Tom_Manager
+	connection := Jerry_Manager
 	gasprice,_:=connection.Man.GetGasPrice()
 	fmt.Println(gasprice)
 	return gasprice
@@ -208,14 +206,17 @@ func GetGasPrice() *big.Int  {
 
 //获取区块
 func GetBlockByNumber()  {
-	connection := Tom_Manager
+	connection := Jerry_Manager
 
-	block,err:=connection.Man.GetBlockByNumber(big.NewInt(211),false)
+	block,err:=connection.Man.GetBlockByNumber(big.NewInt(211),true)
 	if err!=nil {
 		fmt.Println("err:",err)
 	}
-	for i,_:= range block.Transactions {
-		fmt.Println(block.Transactions[i].Hash)
+
+	for _,txs := range block.Transactions {
+		for _,tx := range txs{
+			fmt.Println(tx)
+		}
 	}
 }
 
@@ -223,13 +224,12 @@ func main() {
 	//app, port := vehicle()
 	//app.Run(iris.Addr("localhost:"+port), iris.WithoutServerError(iris.ErrServerClosed))
 
-	//from := "MAN.CrsnQSJJfGxpb2taGhChLuyZwZJo"
-	//to := "MAN.3qQQqfzBdwBjpauj6ght4G8E6o1yQ"
-	//SendTx(from, to, 1, 21000, 18e9)
-	//GetBalance(from)
+	from := "MAN.CrsnQSJJfGxpb2taGhChLuyZwZJo"
+	to := "MAN.3qQQqfzBdwBjpauj6ght4G8E6o1yQ"
+	SendTx(from, to, 1, 21000, 18e9)
+	GetBalance(from)
 	//CreatKeystore()
 	//GenManAddress()
-	//GetGasPrice()
-	//GetBlockByNumber()
+	GetBlockByNumber()
 	GetGasPrice()
 }
