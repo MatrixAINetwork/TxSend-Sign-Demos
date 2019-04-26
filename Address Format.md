@@ -8,5 +8,8 @@
 + CRC8 check will be done on combined data and the check bit will be put at the end of the address to generate the MATRIX account
 
 
+The MATRIX address looks like this:
+
+    MAN.2uTgkPiGX9ziKuAKyeeWBt8duiBRH 
 
 
