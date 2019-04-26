@@ -40,7 +40,7 @@ var (
 
 )
 
-//发送交易
+//This is a demo about how to send transactions
 func SendTx(from string, to string, money int64, usegas int, gasprice int64) (connection *manager.Manager, txID string) {
 
 	connection = Jerry_Manager
@@ -56,25 +56,25 @@ func SendTx(from string, to string, money int64, usegas int, gasprice int64) (co
 		return
 	}
 
-	//获取nonce
+	//getnonce
 	nonce, err := connection.Man.GetTransactionCount(from, "latest")
 	if err != nil {
 		fmt.Println("GetTransactionCount:",err)
 		return
 	}
 
-	//构建交易对象
+	//build transaction object
 	trans := transactions.NewTransaction(nonce.Uint64(), to, amount, gas, price,
 		[]byte{}, 0, 0, 0)
 
-	//对构建好的交易对象签名
+	//sign on the built transaction object
 	raw, err := connection.SignTx(trans, from)
 	if err != nil {
 		fmt.Println("SignTx:",err)
 		return
 	}
 
-	//发送签名后的交易对象
+	//send signed transaction object
 	txID, err = connection.Man.SendRawTransaction(raw)
 	if err != nil {
 		fmt.Println("SendRawTransaction:",err)
@@ -102,7 +102,7 @@ func SendTx(from string, to string, money int64, usegas int, gasprice int64) (co
 	return
 }
 
-//发送交易（使用私钥进行签名）
+//send Transaction (sign via private key)
 func SendTxByPrivateKey(from string, to string, money int64, usegas int, gasprice int64,PrivateKey *ecdsa.PrivateKey) (connection *manager.Manager, txID string) {
 
 	connection = Jerry_Manager
@@ -115,19 +115,19 @@ func SendTxByPrivateKey(from string, to string, money int64, usegas int, gaspric
 		return
 	}
 
-	//获取nonce
+	//getnonce
 	nonce, err := connection.Man.GetTransactionCount(from, "latest")
 	if err != nil {
 		fmt.Println("GetTransactionCount:",err)
 		return
 	}
 
-	//构建交易对象
+	//build transaction object
 	trans := transactions.NewTransaction(nonce.Uint64(), to, amount, gas, price,
 		[]byte{}, 0, 0, 0)
 
 	trans,err=connection.Man.SignTxByPrivate(trans,from,PrivateKey,connection.ChainID)
-	//发送签名后的交易对象
+	//send signed transaction object
 	txID, err = connection.Man.SendRawTransaction(trans)
 	if err != nil {
 		fmt.Println("SendRawTransaction:",err)
@@ -155,7 +155,7 @@ func SendTxByPrivateKey(from string, to string, money int64, usegas int, gaspric
 	return
 }
 
-//创建账户(在本地文件夹中创建私钥文件)
+//create Account (create private key file under local folder)创建账户(在本地文件夹中创建私钥文件)
 func CreatKeystore() {
 	// Create an encrypted keystore with standard crypto parameters
 	ks := keystore.NewKeyStore(filepath.Join("", "keystore"), keystore.StandardScryptN, keystore.StandardScryptP)
@@ -169,7 +169,7 @@ func CreatKeystore() {
 	fmt.Println(manAddress)
 }
 
-//创建账户
+//create Account
 func GenManAddress()  {
 	privateKey, err := crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")
 	if err != nil {
@@ -186,7 +186,7 @@ func GenManAddress()  {
 	fmt.Println(fromMan)
 }
 
-//获取账户余额
+//get account balance
 func GetBalance(addr string) *big.Int {
 	connection := Jerry_Manager
 	balance,err:=connection.Man.GetBalance(addr, "latest")
@@ -196,7 +196,7 @@ func GetBalance(addr string) *big.Int {
 	return balance[0].Balance.ToInt()
 }
 
-//获取gasprice
+//get gasprice
 func GetGasPrice() *big.Int  {
 	connection := Jerry_Manager
 	gasprice,_:=connection.Man.GetGasPrice()
@@ -204,7 +204,7 @@ func GetGasPrice() *big.Int  {
 	return gasprice
 }
 
-//获取区块
+//get block
 func GetBlockByNumber()  {
 	connection := Jerry_Manager
 
