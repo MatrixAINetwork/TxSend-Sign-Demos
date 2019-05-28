@@ -1,14 +1,15 @@
 
 let AIMan = require('aiman');
 let Tx = require('matrixjs-tx');
+let Util = require('matrixjs-util');
 
 var keythereum = require("keythereum");
 var polycrc = require('polycrc')
 const bs58 = require('bs58')
 
 
-var privateKey = new Buffer('c848014293983236e84472625165a3a0e7b66dead73c645ad393451e75e10660', 'hex')
-let from = "MAN.3SPbc3M7bK8zCT8VbvjMGW2eCaBgY";
+var privateKey = new Buffer('9f14efd0b59ec1112ea9a1f659c4ecb35243fd05ef5be175d96e2fed8a2344df', 'hex')
+let from = "MAN.Wkbujtxh7YBnkGV8HZvyPQK3cAPy";
 
 let aiman = new AIMan(new AIMan.providers.HttpProvider("https://testnet.matrix.io"));
 
@@ -47,19 +48,47 @@ function CreatKeystore(password){
 //sendTx
 function sendRawTransaction(from, privateKey) {
 
-var rawTx = {
-  to: 'MAN.2Uoz8g8jauMa2mtnwxrschj2qPJrE',
-  value: '0x989680',
-  gasPrice: '0x430e23400',
-  gas: 21000,
-  data: "0x00",
-  nonce: 4503599627370496,
-  TxEnterType: '',
-  IsEntrustTx: '',
-  CommitTime: 1547539401231,
-  extra_to: [[0, 0, []]],
-  chainId: 3
-}
+  var rawTx = {
+    to: 'MAN.2Uoz8g8jauMa2mtnwxrschj2qPJrE',
+    value: '0x989680',
+    gasPrice: '0x430e23400',
+    gas: 21000,
+    data: "0x",
+    nonce: 4503599627370496,
+    TxEnterType: '',
+    IsEntrustTx: '',
+    CommitTime: 1547539401231,
+    extra_to: [[0, 0, []]],
+    chainId: 3
+  }
+  //extra_to 0,
+  //EnstrustSetType 0 
+  var entrust = [{
+    EntrustAddres: 'MAN.2Uoz8g8jauMa2mtnwxrschj2qPJrE',
+    IsEntrustGas: true,
+    IsEntrustSign: false,
+    StartHeight: 1222,
+    EndHeight: 122222,
+    EnstrustSetType: 0,
+    useStartTime: '',
+    useEndTime: '',
+    EntrustCount: 0
+    },{
+      EntrustAddres: 'MAN.2Uoz8g8jauMa2mtnwxrschj2qPJrE',
+      IsEntrustGas: true,
+      IsEntrustSign: false,
+      StartHeight: 122223,
+      EndHeight: 122229,
+      EnstrustSetType: 0,
+      useStartTime: '',
+      useEndTime: '',
+      EntrustCount: 0
+      }];
+      rawTx.data = JSON.stringify(entrust);
+      rawTx.to = "MAN.Wkbujtxh7YBnkGV8HZvyPQK3cAPy";
+      rawTx.gas = 210000;
+      rawTx.extra_to= [[5, 0, []]];
+  //Enstrust end
   aiman.man.getTransactionCount(from, function (err, result) {
     // console.log(result)
     if (err) {
@@ -68,49 +97,10 @@ var rawTx = {
     var nonce = result;
     rawTx.nonce = aiman.toHex(nonce);
     const tx = new Tx(rawTx);
-    // console.log("sss"+tx);
-	//signTx
     tx.sign(privateKey);
-	//signed data construct
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-   
-    const txData = new Tx(data, true);
-    var newTxData = {};
-    newTxData.v = '0x' + txData.v.toString('hex');
-    newTxData.r = '0x' + txData.r.toString('hex');
-    newTxData.s = '0x' + txData.s.toString('hex');
-    newTxData.data = '0x' + txData.data.toString('hex');
-    newTxData.gasPrice = '0x' + txData.gasPrice.toString('hex');
-    newTxData.gas = '0x' + txData.gasLimit.toString('hex');
-    newTxData.value = '0x' + txData.value.toString('hex');
-    if (newTxData.value == '0x') {
-      newTxData.value = '0x0'
-    }
-    newTxData.nonce = '0x' + txData.nonce.toString('hex');
-    if (txData.to.toString() != '') {
-      newTxData.to = txData.to.toString();
-      newTxData.currency = txData.to.toString().split('.')[0];
-    } else {
-      newTxData.currency = 'MAN';
-    }
-    var txType = '0x' + txData.extra_to[0].toString('hex');
-    var lockHeight = '0x' + txData.extra_to[1].toString('hex');
-    var isEntrustTx = '0x' + txData.IsEntrustTx.toString('hex');
-    var txEnterType = '0x' + txData.TxEnterType.toString('hex');
-    var commitTime = '0x' + txData.CommitTime.toString('hex');
-    newTxData.txType = txType == '0x' ? 0 : Number(txType);
-    newTxData.lockHeight = lockHeight == '0x' ? 0 : Number(lockHeight);
-    newTxData.isEntrustTx = isEntrustTx == '0x' ? 0 : Number(isEntrustTx);
-    newTxData.txEnterType = txEnterType == '0x' ? 0 : Number(txEnterType);
-    newTxData.commitTime = commitTime == '0x' ? 0 : Number(commitTime);
-    newTxData.extra_to = [];
-    for (var i = 0, length = txData.extra_to[2].length; i < length; i++) {
-      newTxData.extra_to.push({
-        to: txData.extra_to[2][i][0].toString(),
-        value: '0x' + txData.extra_to[2][i][1].toString('hex')
-      });
-    }
+    let newTxData = tx.getTxParams(data);
     aiman.man.sendRawTransaction(newTxData, function (err, result) {
       if (!err) {
         console.log(result);
@@ -121,7 +111,12 @@ var rawTx = {
   });
 }
 
-//get gas price
+//verifyMANAddress
+function verifyMANAddress(address){
+    return (/^[A-Z]{2,8}\.[0-9a-zA-Z]{21,29}$/.test(address));
+}
+
+//gas price
 function GetGasPrice() {
   let gasPrice = aiman.man.gasPrice;
   console.log(gasPrice.toString());
@@ -140,8 +135,17 @@ function GetBalance(addr) {
 }
 
 
-// sendRawTransaction(from, privateKey);
+sendRawTransaction(from, privateKey);
 // GetGasPrice();
 // GetBalance("MAN.2Uoz8g8jauMa2mtnwxrschj2qPJrE");
 // GetBlockByNumber(121);
 // CreatKeystore("1111111");
+// Util.creatKeystore("111111",function(result){
+//   console.log(result);  
+// });
+
+// var ifvalid = Util.verifyMANAddress('MAN.2sLYZbWCNNL7QfcQdMnxhx962dLqQ');
+// console.log(ifvalid);
+
+
+
