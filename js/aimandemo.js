@@ -69,6 +69,13 @@ writeUTF = function (str, isGetBytes) {
   }
 }
 
+getTxParams = function(data,rawTx) {
+  let txData = new Tx(data, true);
+  rawTx.v = '0x' + txData.v.toString('hex');
+  rawTx.r = '0x' + txData.r.toString('hex');
+  rawTx.s = '0x' + txData.s.toString('hex');
+};
+
 //Create Account(private key or password + keystore)
 function CreatKeystore(password){
   var dk;// = keythereum.create();
@@ -120,8 +127,18 @@ function sendRawTransaction1(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+   
+    //reset rawtx
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.IsEntrustTx = 0;
+    rawTx.lockHeight = 0;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 0;
+    rawTx.extra_to = [];
+
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -175,8 +192,16 @@ function sendRawTransaction2(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.IsEntrustTx = 0;
+    rawTx.lockHeight = 0;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 5;
+    rawTx.extra_to = [];
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -231,8 +256,16 @@ function sendRawTransaction3(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+    
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.IsEntrustTx = 0;
+    rawTx.lockHeight = 0;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 5;
+    rawTx.extra_to = [];
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -287,8 +320,17 @@ function sendRawTransaction4(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+    
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.IsEntrustTx = 0;
+    rawTx.lockHeight = 0;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 5;
+    rawTx.extra_to = [];
+
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -332,8 +374,17 @@ function sendRawTransaction5(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+    
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.lockHeight = 0;
+    rawTx.IsEntrustTx = 1;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 0;
+    rawTx.extra_to = [];
+    
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -352,7 +403,7 @@ function sendRawTransaction6(from, privateKey) {
     value: '0x989680',
     gasPrice: '0x430e23400',
     gas: 210000,
-    data: "0x",
+    data: "",
     nonce: 4503599627370496,
     TxEnterType: '',
     IsEntrustTx: '',
@@ -381,8 +432,24 @@ function sendRawTransaction6(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+    
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.IsEntrustTx = 0;
+    rawTx.lockHeight = 0;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 0;
+    rawTx.extra_to = [];
+    for (var i = 0, length = onetomany.length; i < length; i++) {
+      rawTx.extra_to.push({
+        to: onetomany[i][0],
+        value: onetomany[i][1],
+        input: onetomany[i][2]
+      });
+    }
+
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -427,8 +494,17 @@ function sendRawTransaction7(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+    
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.IsEntrustTx = 0;
+    rawTx.lockHeight = 0;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 3;
+    rawTx.extra_to = [];
+    
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -476,8 +552,17 @@ function sendRawTransaction8(from, privateKey) {
     tx.sign(privateKey);
     const serializedTx = tx.serialize();
     var data = "0x" + serializedTx.toString('hex');
-    let newTxData = tx.getTxParams(data);
-    aiman.man.sendRawTransaction(newTxData, function (err, result) {
+    
+    getTxParams(data,rawTx); // set v,r,s
+    rawTx.gas = aiman.toHex(rawTx.gas);
+    rawTx.TxEnterType = 0;
+    rawTx.IsEntrustTx = 0;
+    rawTx.lockHeight = 0;
+    rawTx.currency = 'MAN';
+    rawTx.txType = 4;
+    rawTx.extra_to = [];
+    
+    aiman.man.sendRawTransaction(rawTx, function (err, result) {
       if (!err) {
         console.log(result);
       } else {
@@ -512,7 +597,7 @@ function GetBalance(addr) {
 
 
 //sendRawTransaction(from, privateKey);
-sendRawTransaction3(from, privateKey);
+sendRawTransaction8(from, privateKey);
 // GetGasPrice();
 // GetBalance("MAN.2Uoz8g8jauMa2mtnwxrschj2qPJrE");
 // GetBlockByNumber(121);
