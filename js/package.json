@@ -12,15 +12,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aiman": "0.0.1",
+    "aiman": "0.0.10",
     "bignumber.js": "^5.0.0",
     "bs58": "^4.0.1",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "keythereum": "^1.0.2",
-    "matrixjs-tx": "^1.0.1",
-    "matrixjs-util": "^1.0.0",
+    "matrixjs-tx": "^1.0.2",
+    "matrixjs-util": "^1.0.3",
     "polycrc": "^0.1.0",
-    "secp256k1": "^3.4.0",
+    "secp256k1": "^3.7.1",
     "simple-base": "^0.2.1"
   }
 }
